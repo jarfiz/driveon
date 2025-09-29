@@ -24,17 +24,32 @@ import {
 } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
 
-const formSchema = z.object({
-  email: z.email({ message: "Please enter a valid email" }),
-  password: z.string().min(1, { message: "Password is required" }),
-});
+const formSchema = z
+  .object({
+    name: z.string().min(1, { message: "Name is required" }),
+    email: z.email({ message: "Please enter a valid email" }),
+    password: z
+      .string()
+      .min(1, { message: "Password is required" })
+      .min(8, { message: "Password must be at least 8 characters" })
+      .regex(/[^A-Za-z0-9]/, {
+        message: "Password must contain at least one special character",
+      }),
+    confirmPassword: z.string().min(1, { message: "Please confirm password" }),
+  })
+  .refine((data) => data.password === data.confirmPassword, {
+    message: "Passwords do not match",
+    path: ["confirmPassword"],
+  });
 
-const SignInForm = () => {
+const SignUpForm = () => {
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
     defaultValues: {
+      name: "",
       email: "",
       password: "",
+      confirmPassword: "",
     },
   });
 
@@ -56,15 +71,31 @@ const SignInForm = () => {
     <div className="w-full">
       <Card className="mx-auto max-w-md">
         <CardHeader>
-          <CardTitle className="text-2xl">Login</CardTitle>
+          <CardTitle className="text-2xl">Register</CardTitle>
           <CardDescription>
-            Enter your email and password to login to your account.
+            Create a new account by filling out the form below.
           </CardDescription>
         </CardHeader>
         <CardContent>
           <Form {...form}>
             <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-8">
               <div className="grid gap-4">
+                {/* Name Field */}
+                <FormField
+                  control={form.control}
+                  name="name"
+                  render={({ field }) => (
+                    <FormItem className="grid gap-2">
+                      <FormLabel htmlFor="name">Full Name</FormLabel>
+                      <FormControl>
+                        <Input id="name" placeholder="John Doe" {...field} />
+                      </FormControl>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+
+                {/* Email Field */}
                 <FormField
                   control={form.control}
                   name="email"
@@ -84,25 +115,19 @@ const SignInForm = () => {
                     </FormItem>
                   )}
                 />
+
+                {/* Password Field */}
                 <FormField
                   control={form.control}
                   name="password"
                   render={({ field }) => (
                     <FormItem className="grid gap-2">
-                      <div className="flex items-center justify-between">
-                        <FormLabel htmlFor="password">Password</FormLabel>
-                        <Link
-                          href="/forgot-password"
-                          className="ml-auto inline-block text-sm underline"
-                        >
-                          Forgot your password?
-                        </Link>
-                      </div>
+                      <FormLabel htmlFor="password">Password</FormLabel>
                       <FormControl>
                         <PasswordInput
                           id="password"
-                          placeholder="Enter your password"
-                          autoComplete="current-password"
+                          placeholder="Enter a strong password"
+                          autoComplete="new-password"
                           {...field}
                         />
                       </FormControl>
@@ -110,8 +135,31 @@ const SignInForm = () => {
                     </FormItem>
                   )}
                 />
+
+                {/* Confirm Password Field */}
+                <FormField
+                  control={form.control}
+                  name="confirmPassword"
+                  render={({ field }) => (
+                    <FormItem className="grid gap-2">
+                      <FormLabel htmlFor="confirmPassword">
+                        Confirm Password
+                      </FormLabel>
+                      <FormControl>
+                        <PasswordInput
+                          id="confirmPassword"
+                          placeholder="Confirm your password"
+                          autoComplete="new-password"
+                          {...field}
+                        />
+                      </FormControl>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+
                 <Button type="submit" className="w-full">
-                  Login
+                  Register
                 </Button>
                 <Button variant="outline" className="w-full">
                   Login with Google
@@ -120,9 +168,9 @@ const SignInForm = () => {
             </form>
           </Form>
           <div className="mt-4 text-center text-sm">
-            Don&apos;t have an account?{" "}
-            <Link href="/sign-up" className="underline">
-              Sign up
+            Already have an account?{" "}
+            <Link href="/sign-in" className="underline">
+              Login
             </Link>
           </div>
         </CardContent>
@@ -130,4 +178,4 @@ const SignInForm = () => {
     </div>
   );
 };
-export default SignInForm;
+export default SignUpForm;

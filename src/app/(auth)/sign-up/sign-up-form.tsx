@@ -1,7 +1,9 @@
 "use client";
 
+import { MouseEvent } from "react";
 import { useForm } from "react-hook-form";
 import Link from "next/link";
+import { useRouter } from "next/navigation";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { toast } from "sonner";
 import { z } from "zod";
@@ -23,6 +25,7 @@ import {
   FormMessage,
 } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
+import { authClient } from "@/lib/auth-client";
 
 const formSchema = z
   .object({
@@ -43,6 +46,8 @@ const formSchema = z
   });
 
 const SignUpForm = () => {
+  const router = useRouter();
+
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
     defaultValues: {
@@ -54,17 +59,26 @@ const SignUpForm = () => {
   });
 
   async function onSubmit(values: z.infer<typeof formSchema>) {
-    try {
-      console.log(values);
-      toast(
-        <pre className="mt-2 w-[340px] rounded-md bg-slate-950 p-4">
-          <code className="text-white">{JSON.stringify(values, null, 2)}</code>
-        </pre>,
-      );
-    } catch (error) {
-      console.error("Form submission error", error);
-      toast.error("Failed to submit the form. Please try again.");
+    const { data, error } = await authClient.signUp.email({
+      name: values.name,
+      email: values.email,
+      password: values.password,
+    });
+
+    if (error) {
+      toast.error(error.message || "Registration failed. Please try again.");
+    } else {
+      toast.success("Account created successfully!");
+      router.push("/dashboard");
     }
+  }
+
+  async function handleGoogleLogin(e: MouseEvent<HTMLButtonElement>) {
+    e.preventDefault();
+    await authClient.signIn.social({
+      provider: "google",
+      callbackURL: "/dashboard",
+    });
   }
 
   return (
@@ -158,11 +172,15 @@ const SignUpForm = () => {
                   )}
                 />
 
-                <Button type="submit" className="w-full">
+                <Button type="submit" className="w-full cursor-pointer">
                   Register
                 </Button>
-                <Button variant="outline" className="w-full">
-                  Login with Google
+                <Button
+                  variant="outline"
+                  className="w-full cursor-pointer"
+                  onClick={handleGoogleLogin}
+                >
+                  Register with Google
                 </Button>
               </div>
             </form>

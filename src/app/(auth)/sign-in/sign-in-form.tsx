@@ -123,12 +123,12 @@ const SignInForm = () => {
                     </FormItem>
                   )}
                 />
-                <Button type="submit" className="w-full">
+                <Button type="submit" className="w-full cursor-pointer">
                   Login
                 </Button>
                 <Button
                   variant="outline"
-                  className="w-full"
+                  className="w-full cursor-pointer"
                   onClick={handleGoogleLogin}
                 >
                   Login with Google

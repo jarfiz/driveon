@@ -24,6 +24,8 @@ model User {
   updatedAt     DateTime  @default(now()) @updatedAt
   sessions      Session[]
   accounts      Account[]
+  Listing       Listing[]
+  Booking       Booking[]
 
   @@unique([email])
   @@map("user")
@@ -72,4 +74,51 @@ model Verification {
   updatedAt  DateTime @default(now()) @updatedAt
 
   @@map("verification")
+}
+
+model Vehicle {
+  id            String   @id
+  brand         String
+  model         String
+  year          DateTime
+  license_plate String
+  color         String
+  description   String
+  images        String[]
+  status        String
+
+  Listing Listing[]
+  Booking Booking[]
+}
+
+model Listing {
+  id             String @id
+  price_per_day  String
+  deposit_amount String
+  status         String
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @default(now()) @updatedAt
+
+  vehicle   Vehicle @relation(fields: [vehicleId], references: [id])
+  vehicleId String
+
+  owner   User   @relation(fields: [ownerId], references: [id])
+  ownerId String
+}
+
+model Booking {
+  id             String   @id
+  total_price    String // change later to decimal when the value is already clear
+  payment_status String
+  start_date     DateTime
+  end_date       DateTime
+  createdAt      DateTime @default(now())
+  updatedAt      DateTime @default(now()) @updatedAt
+
+  vehicle   Vehicle @relation(fields: [vehicleId], references: [id])
+  vehicleId String
+
+  owner   User   @relation(fields: [ownerId], references: [id])
+  ownerId String
 }

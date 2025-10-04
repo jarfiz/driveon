@@ -103,8 +103,10 @@ const Navbar = () => {
                   >
                     <Avatar className="ring-border h-10 w-10 ring-1">
                       {user.image ? (
-                        <AvatarImage
+                        <Image
                           src={user.image}
+                          width={100}
+                          height={100}
                           alt={user.name || "User"}
                         />
                       ) : (

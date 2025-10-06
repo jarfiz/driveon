@@ -1,3 +1,5 @@
+import Cars from "@/components/vehicles/cars";
+
 export default async function page({
   params,
 }: {
@@ -7,6 +9,7 @@ export default async function page({
   const type = slug[0];
   const id = slug[1];
 
-  if (type === "cars") return <h1>Cars {id}</h1>;
+  if (type === "cars") return <Cars id={id} />;
+
   return <div>page</div>;
 }

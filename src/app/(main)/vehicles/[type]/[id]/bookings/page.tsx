@@ -7,7 +7,9 @@ export default async function Page({
 }) {
   const { type, id } = params;
 
-  if (type === "cars" && id) return <Bookings />;
+  if (type === "cars" && id) {
+    return <Bookings />;
+  }
 
   return <div>404 - not found</div>;
 }

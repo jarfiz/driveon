@@ -58,7 +58,9 @@ function fmtCurrency(amount: number, currency = "IDR") {
 }
 
 function fmtDate(iso?: string) {
-  if (!iso) return "-";
+  if (!iso) {
+    return "-";
+  }
   try {
     return new Date(iso).toLocaleString();
   } catch {

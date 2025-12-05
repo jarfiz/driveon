@@ -1,7 +1,8 @@
 {
-  "name": "driveon",
+  "name": "vehicleshare",
   "version": "0.1.0",
   "private": true,
+  "description": "A peer-to-peer vehicle rental and leasing platform where users can rent vehicles and lease their own vehicles for extra income",
   "scripts": {
     "dev": "next dev --turbopack",
     "build": "next build --turbopack",
